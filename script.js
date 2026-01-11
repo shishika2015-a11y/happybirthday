@@ -72,10 +72,13 @@ function animate() {
   animationId = requestAnimationFrame(animate);
 }
 
-/* ===== メッセージ表示 ===== */
+/* ===== メッセージ表示（修正版） ===== */
 function showMessage(text, isFinal = false) {
-  messageDiv.className = "";
-  void messageDiv.offsetWidth; // 再描画トリガー
+  // クラスを「消す」のではなく「外す」
+  messageDiv.classList.remove("fade-in", "final-message");
+
+  // 再描画トリガー（フェードを毎回効かせる）
+  void messageDiv.offsetWidth;
 
   messageDiv.textContent = text;
 
@@ -108,7 +111,7 @@ function showMessagesSequentially() {
   }, 3500);
 }
 
-/* ===== ボタン（連打防止） ===== */
+/* ===== ボタン ===== */
 btn.addEventListener("click", () => {
   if (btn.disabled) return;
 

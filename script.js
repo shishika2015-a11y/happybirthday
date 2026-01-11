@@ -11,11 +11,12 @@ const messages = [
   "爷爷，你今年多少岁了？🎂",
   "我今年十岁😊",
   "今年或者明年我想去看你。😊",
-  "爷爷，生日快乐！🎂"
+  "爷爷，生日快乐！🎂" // 最後は固定
 ];
 
 let index = 0;
 let timer = null;
+let isPlaying = false; // ★ 再生中フラグ
 
 /* ===== 紙吹雪 ===== */
 function resizeCanvas() {
@@ -72,26 +73,11 @@ function animate() {
   animationId = requestAnimationFrame(animate);
 }
 
-/* ===== メッセージ表示（修正版） ===== */
-function showMessage(text, isFinal = false) {
-  // クラスを「消す」のではなく「外す」
-  messageDiv.classList.remove("fade-in", "final-message");
-
-  // 再描画トリガー（フェードを毎回効かせる）
-  void messageDiv.offsetWidth;
-
-  messageDiv.textContent = text;
-
-  if (isFinal) {
-    messageDiv.classList.add("final-message");
-  }
-
-  messageDiv.classList.add("fade-in");
-}
-
+/* ===== メッセージ順番表示 ===== */
 function showMessagesSequentially() {
+  isPlaying = true;          // ★ 再生開始
   index = 0;
-  showMessage(messages[index]);
+  messageDiv.textContent = messages[index];
 
   if (timer) clearInterval(timer);
 
@@ -100,23 +86,17 @@ function showMessagesSequentially() {
 
     if (index >= messages.length) {
       clearInterval(timer);
-      btn.disabled = false;
-      btn.textContent = "もう一度";
+      isPlaying = false;     // ★ 再生終了
       return;
     }
 
-    const isFinal = index === messages.length - 1;
-    showMessage(messages[index], isFinal);
-
+    messageDiv.textContent = messages[index];
   }, 3500);
 }
 
-/* ===== ボタン ===== */
+/* ===== ボタン（連打しても無効） ===== */
 btn.addEventListener("click", () => {
-  if (btn.disabled) return;
-
-  btn.disabled = true;
-  btn.textContent = "再生中…";
+  if (isPlaying) return;     // ★ 再生中は何もしない
 
   showMessagesSequentially();
   startConfetti();

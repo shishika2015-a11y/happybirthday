@@ -11,7 +11,7 @@ const messages = [
   "爷爷，你今年多少岁了？🎂",
   "我今年十岁😊",
   "今年或者明年我想去看你。😊",
-  "爷爷，生日快乐！🎂" // 最後は固定
+  "爷爷，生日快乐！🎂"
 ];
 
 let index = 0;
@@ -57,7 +57,6 @@ function startConfetti() {
   cancelAnimationFrame(animationId);
   animate();
 
-  // 6秒後に終了
   setTimeout(() => {
     cancelAnimationFrame(animationId);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -73,10 +72,23 @@ function animate() {
   animationId = requestAnimationFrame(animate);
 }
 
-/* ===== メッセージをゆっくり順番表示 ===== */
+/* ===== メッセージ表示 ===== */
+function showMessage(text, isFinal = false) {
+  messageDiv.className = "";
+  void messageDiv.offsetWidth; // 再描画トリガー
+
+  messageDiv.textContent = text;
+
+  if (isFinal) {
+    messageDiv.classList.add("final-message");
+  }
+
+  messageDiv.classList.add("fade-in");
+}
+
 function showMessagesSequentially() {
   index = 0;
-  messageDiv.textContent = messages[index];
+  showMessage(messages[index]);
 
   if (timer) clearInterval(timer);
 
@@ -84,16 +96,25 @@ function showMessagesSequentially() {
     index++;
 
     if (index >= messages.length) {
-      clearInterval(timer); // 最後で停止
+      clearInterval(timer);
+      btn.disabled = false;
+      btn.textContent = "もう一度";
       return;
     }
 
-    messageDiv.textContent = messages[index];
-  }, 3500); // ★ 3秒ごとに切り替え
+    const isFinal = index === messages.length - 1;
+    showMessage(messages[index], isFinal);
+
+  }, 3500);
 }
 
-/* ===== ボタン ===== */
+/* ===== ボタン（連打防止） ===== */
 btn.addEventListener("click", () => {
+  if (btn.disabled) return;
+
+  btn.disabled = true;
+  btn.textContent = "再生中…";
+
   showMessagesSequentially();
   startConfetti();
 });

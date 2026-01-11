@@ -12,13 +12,13 @@ body {
   transform: translateY(10px);
 }
 
-/* フェードイン用 */
+/* フェードイン */
 .fade-in {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* 最後のメッセージ専用 */
+/* 最後のメッセージ */
 .final-message {
   color: red;
   font-size: clamp(28px, 8vw, 56px);
